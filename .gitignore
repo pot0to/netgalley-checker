@@ -1,0 +1,8 @@
+netgalley_session/
+netgalley_data.tsv
+netgalley_results.txt
+__pycache__/
+*.pyc
+.DS_Store
+.env
+node_modules/
