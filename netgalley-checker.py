@@ -67,6 +67,9 @@ async def add_goodreads_data(page, book_info, visited_urls):
         except: pass
         
         genre_list = await genre_elements.all_inner_texts()
+        
+        # Remove "...more" entries
+        genre_list = [g for g in genre_list if g.strip() != "...more"]
 
         book_info["genres"] = ", ".join(genre_list)
 
