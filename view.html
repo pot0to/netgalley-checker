@@ -16,10 +16,17 @@
 </head>
 <body>
     <h2>📚 My Reading List</h2>
+    <p id="last-updated" style="color: #666; font-size: 0.9rem; margin-bottom: 20px;"></p>
     <div id="table-container"></div>
 
     <script>
         d3.tsv("netgalley_data.tsv").then(function(data) {
+            // Display last updated time
+            const now = new Date();
+            const dateStr = now.toLocaleDateString();
+            const timeStr = now.toLocaleTimeString();
+            document.getElementById('last-updated').textContent = `Last updated: ${dateStr} at ${timeStr}`;
+            
             const columns = ["Title", "Author", "Rating", "Reviews", "Genres", "NetGalley", "GoodReads"];
             const table = d3.select("#table-container").append("table");
             const thead = table.append("thead").append("tr");
