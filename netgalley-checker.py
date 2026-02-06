@@ -82,7 +82,7 @@ async def run_scraper():
         visited_urls = set()   
         final_results = [] 
 
-        context = await p.chromium.launch_persistent_context(USER_DATA_DIR, headless=False)
+        context = await p.chromium.launch_persistent_context(USER_DATA_DIR, headless=True)
         page = await context.new_page()
 
         books_to_process = []
