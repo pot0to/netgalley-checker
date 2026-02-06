@@ -16,42 +16,53 @@
 </head>
 <body>
     <h2>📚 My Reading List</h2>
-    <p id="last-updated" style="color: #666; font-size: 0.9rem; margin-bottom: 20px;"></p>
+    <p id="last-updated" style="color: #666; font-size: 0.9rem; margin-bottom: 20px;">Checking file timestamp...</p>
     <div id="table-container"></div>
 
     <script>
-        d3.tsv("netgalley_data.tsv").then(function(data) {
-            // Display last updated time
-            const now = new Date();
-            const dateStr = now.toLocaleDateString();
-            const timeStr = now.toLocaleTimeString();
-            document.getElementById('last-updated').textContent = `Last updated: ${dateStr} at ${timeStr}`;
-            
+        const filename = "netgalley_data.tsv";
+
+        // 1. First, fetch the file metadata to get the "Last-Modified" header
+        fetch(filename, { method: 'HEAD' })
+            .then(response => {
+                const lastModified = response.headers.get('Last-Modified');
+                const displayElement = document.getElementById('last-updated');
+                
+                if (lastModified) {
+                    const date = new Date(lastModified);
+                    displayElement.textContent = `Data last synced: ${date.toLocaleString()}`;
+                } else {
+                    // Fallback if the server doesn't provide the header (common on some local setups)
+                    displayElement.textContent = "Last updated: Unknown (check GitHub repo)";
+                }
+            })
+            .catch(() => {
+                document.getElementById('last-updated').textContent = "Could not retrieve sync time.";
+            });
+
+        // 2. Load the data as usual
+        d3.tsv(filename).then(function(data) {
             const columns = ["Title", "Author", "Rating", "Reviews", "Genres", "NetGalley", "GoodReads"];
             const table = d3.select("#table-container").append("table");
             const thead = table.append("thead").append("tr");
             const tbody = table.append("tbody");
 
-            // Create Headers
             thead.selectAll("th")
                 .data(columns)
                 .enter()
                 .append("th")
                 .text(d => d.replace("_URL", " Link"));
 
-            // Create Rows
             const rows = tbody.selectAll("tr")
                 .data(data)
                 .enter()
                 .append("tr");
 
-            // Populate Cells
             rows.selectAll("td")
                 .data(row => columns.map(column => ({ column: column, value: row[column] })))
                 .enter()
                 .append("td")
                 .html(d => {
-                    // Custom formatting for specific columns
                     if (d.column === "Rating") return `<span class="rating">⭐ ${d.value}</span>`;
                     if ((d.column === "NetGalley" || d.column === "GoodReads") && d.value) {
                         return `<a href="${d.value}" target="_blank" class="link-btn">Visit</a>`;
@@ -60,7 +71,7 @@
                 });
         }).catch(err => {
             console.error(err);
-            document.body.innerHTML += "<p>Error: Run a local server to view TSV data.</p>";
+            document.getElementById('table-container').innerHTML = "<p>Error: Could not load data. Ensure you are running a local server or viewing via GitHub Pages.</p>";
         });
     </script>
 </body>
