@@ -11,6 +11,10 @@ jobs:
   scrape:
     runs-on: ubuntu-latest
     
+    # This block gives the GitHub Actions bot permission to push code back to your repo
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -25,9 +29,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install playwright tabulate
           playwright install chromium
+          # This installs the system libraries needed for Chromium to run in Linux
+          playwright install-deps
 
       - name: Run scraper
-        run: python netgalley-checker.py
+        # We use xvfb-run to provide a virtual display since headless=False is likely in your code
+        run: xvfb-run python netgalley-checker.py
 
       - name: Commit and push results
         run: |
