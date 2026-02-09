@@ -3,6 +3,7 @@ from playwright.async_api import async_playwright
 import urllib.parse
 from tabulate import tabulate
 import re
+import json
 
 # Configuration
 USER_DATA_DIR = "./netgalley_session"
@@ -82,7 +83,18 @@ async def run_scraper():
         visited_urls = set()   
         final_results = [] 
 
-        context = await p.chromium.launch_persistent_context(USER_DATA_DIR, headless=True)
+        # The --headless=new flag tells Chromium to use the modern engine
+        # The --disable-blink-features flag removes the "I am a bot" fingerprint
+        context = await p.chromium.launch_persistent_context(
+            USER_DATA_DIR, 
+            headless=True,
+            args=[
+                "--headless=new",
+                "--disable-blink-features=AutomationControlled"
+            ],
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+        )
+
         page = await context.new_page()
 
         books_to_process = []
