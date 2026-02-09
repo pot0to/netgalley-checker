@@ -1,6 +1,7 @@
 # NetGalley Book Checker
 
 A web scraper that finds highly-rated, most requested books on NetGalley and cross-references them on Goodreads.
+View at: https://pot0to.github.io/netgalley-checker/view.html
 
 ## Features
 - Scrapes book covers from NetGalley Most Requested catalog (pages 1-5)
