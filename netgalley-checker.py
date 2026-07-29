@@ -186,7 +186,7 @@ async def run_scraper():
                             visited_titles.add(title)
                             print(f"📖 Found: {title} by {author}")
                     except Exception as e:
-                        print(f"⚠️ Error processing cover {row},{col}: {e}")
+                        print(f"⚠️ Error processing cover {detail_idx},{col}: {e}")
                     finally:
                         # Close the side panel by clicking the first visible close button
                         # Retry up to 3 times as the panel can load slowly
@@ -203,6 +203,8 @@ async def run_scraper():
                                     break
                             await asyncio.sleep(0.5)
                         await asyncio.sleep(0.3)
+                        try: await page.keyboard.press("Escape")
+                        except Exception: pass
 
         # 2. GOODREADS CROSS-REFERENCING
         print(f"\n📚 Found {len(books_to_process)} unique books. Starting Goodreads analysis...")
